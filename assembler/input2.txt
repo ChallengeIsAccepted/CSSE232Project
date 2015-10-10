@@ -1,0 +1,54 @@
+rel_prime:
+or #t0, #zero, #zero // Initialize t0 to 0.
+addi #t0, 2 // t0 = m = 2
+addi #sp, 3 // Make room for ra, 2, and n on the stack
+sw #ra, 0(#sp) // Store the ra on the stack
+sw #a0, 1(#sp) // Store n on the stack
+sw #t0, 2(#sp) // Store m on the stack
+
+rel_while:
+lw #a0, 1(#sp) // Load n into arg register 0
+lw #a1, 2(#sp) // Load m into arg register 1
+jal gcd // Run gcd
+or #t0, #zero, #zero // Set t0 to 0
+ori #t0, 1 // Put 1 into t0, so we can check it against rr
+eq #t0, #rr // If gcd returns 1, we're done (finish_rel)
+jeq finish_rel
+lw #t0, 1(#sp) // Get m into t0
+addi #t0, 1 // m = m + 1
+sw #t0, 1(#sp) // Put m back into the stack
+eq #zero, #zero
+jeq rel_while
+
+finish_rel:
+lw #ra, 0(#sp) // Return ra to its original state
+lw #rr, 1(#sp) // Load m into the return register
+addi #sp, -3
+eq #zero, #zero
+add #pc, #zero, #ra
+
+gcd:
+eq #a0, #zero	// If a == 0, eq_reg = 1
+jeq ret_b
+
+gcd_while:
+eq #a1, #zero // If b == 0, eq_reg = 1
+jeq ret_a
+slt #a0, #a1 // If a < b, we'll jump to ret_b
+jeq bbma
+sub #a0, #a0, #a1 // a = a - b
+eq #zero, #zero
+jeq gcd_while // Do the loop again
+
+bbma:
+sub #a1, #a1, #a0 // Return b = b - a
+eq #zero, #zero
+jeq gcd_while  // Jumps to beginning of gcd_while
+
+ret_b:
+or #rr, #zero, #a1 // Set rr to b
+add #pc, #zero, #ra
+
+ret_a:
+	or #rr, #zero, #a0 // Set rr to a
+	add #pc, #zero, #ra

@@ -4,7 +4,7 @@ import re
 
 # We will use these tuples to contain an ordered collection or registers/instructions - their index corresponds to their bit value
 REGISTERS = ("zero", "sp", "a0", "a1", "rr", "ra", "t0", "t1", "t2",
-	"t3", "t4", "t5", "t6", "t7", "t8", "t9", "pc")
+	"t3", "t4", "t5", "t6", "t7", "t8", "pc")
 
 INSTRUCTIONS = ("add", "addi", "and", "eq", "jal", "jeq", "ori", "lui",
 	"lw", "or", "sll", "srl", "sra", "slt", "sw", "sub")
@@ -17,7 +17,7 @@ temp = []
 
 # Removes comments and extra whitespace from a line
 def uncomment(line):
-	return str.strip(re.match(r"(.+)/{2}.*|(.*)", line).group(0))
+	return str.strip(re.match("([^/]*)", line).group(0))
 
 # If we end with a colon, it's a label; add the label to the labels dictionary
 def check_label(line, line_number):
@@ -38,9 +38,9 @@ lines = []
 
 # Here we filter out anything not relevant and check for labels, then we stick the rest in the lines list
 for line in sys.stdin:
-	line = uncomment(line)
-	if line and check_label(line, index):
-		lines.append(line)
+	uline = uncomment(line)
+	if uline and check_label(uline, index):
+		lines.append(uline)
 		index += 1
 
 # This is where the magic happens
@@ -60,19 +60,22 @@ for line in lines:
 	# Contains the raw bits of the assembly
 	bitline = ""
 
-	# Basic format:
 	# handles instructions, registers, labels, and immediates differently
 	while len(unpacked) > 0:
+		if bits_left <= 0:
+			print("Somehow there were more instructions/registers/immediates than bits available")
+			raise SystemExit
 		item = unpacked.pop(0)
 		if item in INSTRUCTIONS:
-			bitline += BitString(uint = INSTRUCTIONS.index(item), length = 4).bin
+			bitline += BitString(uint = INSTRUCTIONS.index(item), length = 4).bin + " "
 			bits_left -= 4
 		elif item in REGISTERS:
-			bitline += BitString(uint = REGISTERS.index(item), length = 4).bin
+			bitline += BitString(uint = REGISTERS.index(item), length = 4).bin + " "
 			bits_left -= 4
 		elif item in labels:
 			# shouldn't be necessary, but eventually we might want labels for immediate values (e.g. A = 1)
-			bitline += BitString(int = labels[item], length = bits_left).bin
+			bitline += BitString(int = labels[item], length = bits_left).bin + " "
+			bits_left -= bits_left
 		else:
 			bitline += BitString(int = int(item), length = bits_left).bin
 			bits_left -= bits_left
