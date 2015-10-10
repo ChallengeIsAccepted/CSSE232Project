@@ -84,5 +84,8 @@ for line in lines:
 	temp.append(bitline)
 
 # Now we just print it out
+longest = len(max(lines, key = len)) + 7
+
 for index, line in enumerate(temp):
-	sys.stdout.write(lines[index] + " // " + line + "\n")
+	line_out = lines[index].ljust(longest) + "// " + line + "\n"
+	sys.stdout.write(line_out)
