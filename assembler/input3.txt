@@ -1,0 +1,9 @@
+addi #t0, 4 // Adds 4 to #t0
+lui #t0, 8 // Loads 8 into upper half of #t0
+ori #t0, 5 // Loads 5 into lower half of #t0
+sra #t0, 3 // Shifted #t0 right arithmetically 3 bits
+addi #t1, 4 // Adds 4 to #t1
+lw #t0, 0(pc) // loads pc value into #t0
+or #t0, #t0, #t1 // Or values in #t0 and #t1
+srl #t0, 2 // Shifts #t0 2 bits right
+sll #t1, 4 // Shifts #t1 4 bits left
