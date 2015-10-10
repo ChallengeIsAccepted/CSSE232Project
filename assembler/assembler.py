@@ -61,10 +61,11 @@ for line in lines:
 	bitline = ""
 
 	# handles instructions, registers, labels, and immediates differently
-	while len(unpacked) > 0:
-		if bits_left <= 0:
-			print("Somehow there were more instructions/registers/immediates than bits available")
-			raise SystemExit
+	while bits_left > 0:
+		if len(unpacked) == 0:
+			bitline += "0000 "
+			bits_left -= 4
+			continue
 		item = unpacked.pop(0)
 		if item in INSTRUCTIONS:
 			bitline += BitString(uint = INSTRUCTIONS.index(item), length = 4).bin + " "
