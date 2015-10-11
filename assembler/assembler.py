@@ -2,7 +2,7 @@ from bitstring import BitString
 import sys
 import re
 
-# We will use these tuples to contain an ordered collection or registers/instructions - their index corresponds to their bit value
+# We will use these tuples to contain an ordered collection of registers/instructions - their index corresponds to their bit value
 REGISTERS = ("zero", "sp", "a0", "a1", "rr", "ra", "t0", "t1", "t2",
 	"t3", "t4", "t5", "t6", "t7", "t8", "pc")
 
