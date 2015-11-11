@@ -1,3 +1,5 @@
+#!/c/Users/Michael/AppData/Local/Programs/Python/Python35-32/python
+
 import sys
 import re
 
@@ -13,8 +15,8 @@ index = 0
 # Contains the assembly lines
 lines = []
 
-REGISTERS = ("zero", "sp", "a0", "a1", "rr", "ra", "t0",
-             "t1", "t2", "t3", "t4", "t5", "t6", "t7")
+REGISTERS = ["zero", "sp", "a0", "a1", "rr", "ra", "t0",
+             "t1", "t2", "t3", "t4", "t5", "t6", "t7"]
 
 
 def to_hex(s):
@@ -31,8 +33,10 @@ def build_instruction_handler(op, instr_type):
         elif instr_type == "i":  # OP | reg0 | imm
             s += to_hex(REGISTERS.index(items[1]))
             s += to_hex(items[2])
+            s += "0"
         elif instr_type == "j":  # OP | imm
-            s += to_hex(items[1])
+            s += to_hex(labels[items[1]])
+            s += "00"
         elif instr_type == "z":  # OP | reg0 | 0 | 0
             s += to_hex(REGISTERS.index(items[1]))
             s += "00"
@@ -69,6 +73,7 @@ INSTRUCTIONS = {
     "sub" : build_instruction_handler(15, "r")
 }
 
+
 # Removes comments and extra whitespace from a line
 def uncomment(s):
     return str.strip(re.match("([^/]*)", s).group(0))
@@ -94,10 +99,9 @@ for line in sys.stdin:
         lines.append(uline)
         index += 1
 
-
 for line in lines:
     unpacked = unpack(line)
-    machine_code.append(INSTRUCTIONS[unpacked][0](unpacked))
+    machine_code.append(INSTRUCTIONS[unpacked[0]](unpacked))
 
 # Now we just print it out
 longest = len(max(lines, key=len)) + 7
