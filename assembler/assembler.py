@@ -1,5 +1,3 @@
-#!/c/Users/Michael/AppData/Local/Programs/Python/Python35-32/python
-
 import sys
 import re
 
