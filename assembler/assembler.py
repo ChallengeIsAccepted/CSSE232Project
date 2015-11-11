@@ -14,7 +14,7 @@ index = 0
 lines = []
 
 REGISTERS = ["zero", "sp", "a0", "a1", "rr", "ra", "t0",
-             "t1", "t2", "t3", "t4", "t5", "t6", "t7"]
+             "t1", "t2", "t3", "t4", "t5", "t6", "t7", "imm", "eq_reg"]
 
 
 def to_hex(s):
@@ -30,11 +30,9 @@ def build_instruction_handler(op, instr_type):
             s += to_hex(REGISTERS.index(items[2]))
         elif instr_type == "i":  # OP | reg0 | imm
             s += to_hex(REGISTERS.index(items[1]))
-            s += to_hex(items[2])
-            s += "0"
+            s += to_hex(items[2]).zfill(2)
         elif instr_type == "j":  # OP | imm
-            s += to_hex(labels[items[1]])
-            s += "00"
+            s += to_hex(labels[items[1]]).zfill(3)
         elif instr_type == "z":  # OP | reg0 | 0 | 0
             s += to_hex(REGISTERS.index(items[1]))
             s += "00"
@@ -49,7 +47,14 @@ def build_instruction_handler(op, instr_type):
 
         return s
 
-    return handler
+    def wrapper(items):
+        try:
+            return handler(items)
+        except Exception:
+            print("Failed to interpret command: " + items[0])
+            return "!!!!"
+
+    return wrapper
 
 
 INSTRUCTIONS = {
