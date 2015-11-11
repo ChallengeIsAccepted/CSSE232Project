@@ -1,7 +1,0 @@
-	sw #a0, 4(#sp)
-	sw #a1, 3(#sp)
-	sw #t0, 2(#sp)
-mylabel:
-	addi #a0, #a1, 4
-	jal mylabel
-	
