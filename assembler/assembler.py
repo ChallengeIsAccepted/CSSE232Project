@@ -14,7 +14,7 @@ index = 0
 lines = []
 
 REGISTERS = ["zero", "sp", "a0", "a1", "rr", "ra", "t0",
-             "t1", "t2", "t3", "t4", "t5", "t6", "t7", "imm", "eq_reg"]
+             "t1", "t2", "t3", "t4", "t5", "t6", "display", "imm", "eq_reg"]
 
 
 def to_hex(s):
@@ -25,9 +25,9 @@ def build_instruction_handler(op, instr_type):
     def handler(items):
         s = "0x" + to_hex(op)
         if instr_type == "r":  # OP | reg2 | reg0 | reg1
-            s += to_hex(REGISTERS.index(items[3]))
             s += to_hex(REGISTERS.index(items[1]))
             s += to_hex(REGISTERS.index(items[2]))
+            s += to_hex(REGISTERS.index(items[3]))
         elif instr_type == "i":  # OP | reg0 | imm
             s += to_hex(REGISTERS.index(items[1]))
             s += to_hex(items[2]).zfill(2)
@@ -39,8 +39,8 @@ def build_instruction_handler(op, instr_type):
         elif instr_type == "s":  # OP | reg0 | reg1 | imm
             # Note that this is the weird one, because lw/sw
             s += to_hex(REGISTERS.index(items[1]))
-            s += to_hex(REGISTERS.index(items[3]))
-            s += to_hex(items[2])
+            s += to_hex(REGISTERS.index(items[2]))
+            s += to_hex(items[3])
         else:
             print("Invalid instruction type : " + instr_type)
             return "INVALID"
